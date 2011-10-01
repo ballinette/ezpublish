@@ -1,0 +1,33 @@
+###
+# Pensez à rajouter ForceVirtualHost=true dans la
+# section [SiteAccessSettings] de site.ini.append.php
+# dans l'override global de l'instance eZ Publish
+###
+
+DirectoryIndex index.php
+
+RewriteEngine On
+RewriteBase /
+
+RewriteRule !\.(gif|jpe?g|png|css|js|jar|html)|var(.+)storage.pdf(.+)\.pdf?$ - [C]
+
+RewriteCond %{HTTP_HOST} ^webdav\..*
+RewriteRule ^(.*) webdav.php [L]
+
+RewriteCond %{HTTP_HOST} ^soap\..*
+RewriteRule ^(.*) soap.php [L]
+
+RewriteRule ^var/cache/debug.html.* - [L]
+RewriteRule ^var/[^/]+/cache/debug.html.* - [L]
+Rewriterule ^var/storage/.* - [L]
+Rewriterule ^var/[^/]+/storage/.* - [L]
+RewriteRule ^var/cache/texttoimage/.* - [L]
+RewriteRule ^var/[^/]+/cache/texttoimage/.* - [L]
+Rewriterule ^design/[^/]+/(stylesheets|images|javascript)/.* - [L]
+Rewriterule ^share/icons/.* - [L]
+Rewriterule ^extension/[^/]+/design/[^/]+/(stylesheets|images|javascripts?)/.* - [L]
+Rewriterule ^packages/styles/.+/(stylesheets|images|javascript)/[^/]+/.* - [L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule .* index.php [L]
