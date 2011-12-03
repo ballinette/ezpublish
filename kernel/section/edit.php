@@ -2,7 +2,7 @@
 /**
  * @copyright Copyright (C) 1999-2011 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version  2011.9
+ * @version  2011.11
  * @package kernel
  */
 
@@ -47,7 +47,7 @@ if ( $http->hasPostVariable( "StoreButton" ) )
     else
     {
         $conditions = array( 'identifier' => $sectionIdentifier,
-                             'id' => array( '!=', $SectionID ) );
+                             'id' => array( '!=', !empty( $SectionID ) ? $SectionID : 0 ) );
         $existingSection = eZSection::fetchFilteredList( $conditions );
         if( count( $existingSection ) > 0 )
         {

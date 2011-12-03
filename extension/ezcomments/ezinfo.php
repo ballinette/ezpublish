@@ -13,7 +13,7 @@ class ezcommentsInfo
     {
         return array(
             'Name' => "<a href='http://projects.ez.no/ezcomments'>eZ Comments</a>",
-            'Version' => "1.3.0-dev",
+            'Version' => "1.4.0-dev",
             'Copyright' => 'Copyright (C) 1999-2011 eZ Systems AS',
             'License' => 'GNU General Public License v2',
             'Includes the following third-party software' => array( 'Name' => 'reCAPTCHA PHP Library',

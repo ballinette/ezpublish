@@ -4,7 +4,7 @@
  *
  * @copyright Copyright (C) 1999-2011 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version  2011.9
+ * @version  2011.11
  * @package kernel
  */
 
@@ -71,7 +71,8 @@ class eZCache
                                        'enabled' => true,
                                        'path' => false,
                                        'is-clustered' => true,
-                                       'function' => array( 'eZCache', 'clearClassID' ) ),
+                                       'function' => array( 'eZCache', 'clearClassID' ),
+                                       'purge-function' => array( 'eZCache', 'clearClassID' ) ),
                                 array( 'name' => ezpI18n::tr( 'kernel/cache', 'Sort key cache' ),
                                        'id' => 'sortkey',
                                        'tag' => array( 'content' ),
@@ -79,6 +80,7 @@ class eZCache
                                        'enabled' => true,
                                        'path' => false,
                                        'function' => array( 'eZCache', 'clearSortKey' ),
+                                       'purge-function' => array( 'eZCache', 'clearSortKey' ),
                                        'is-clustered' => true ),
                                 array( 'name' => ezpI18n::tr( 'kernel/cache', 'URL alias cache' ),
                                        'id' => 'urlalias',
@@ -145,7 +147,8 @@ class eZCache
                                        'tag' => array( 'content' ),
                                        'path' => false,
                                        'enabled' => true,
-                                       'function' => array( 'eZCache', 'clearContentTreeMenu' ) ),
+                                       'function' => array( 'eZCache', 'clearContentTreeMenu' ),
+                                       'purge-function' => array( 'eZCache', 'clearContentTreeMenu' ) ),
                                 array( 'name' => ezpI18n::tr( 'kernel/cache', 'State limitations cache' ),
                                        'is-clustered' => true,
                                        'id' => 'state_limitations',
@@ -153,13 +156,15 @@ class eZCache
                                        'expiry-key' => 'state-limitations',
                                        'enabled' => true,
                                        'path' => false,
-                                       'function' => array( 'eZCache', 'clearStateLimitations' ) ),
+                                       'function' => array( 'eZCache', 'clearStateLimitations' ),
+                                       'purge-function' => array( 'eZCache', 'clearStateLimitations' ) ),
                                 array( 'name' => ezpI18n::tr( 'kernel/cache', 'Design base cache' ),
                                        'id' => 'design_base',
                                        'tag' => array( 'template' ),
                                        'enabled' => $ini->variable( 'DesignSettings', 'DesignLocationCache' ) == 'enabled',
                                        'path' => false,
-                                       'function' => array( 'eZCache', 'clearDesignBaseCache' ) ),
+                                       'function' => array( 'eZCache', 'clearDesignBaseCache' ),
+                                       'purge-function' => array( 'eZCache', 'clearDesignBaseCache' ) ),
                                 /**
                                  * caches the list of active extensions (per siteaccess and global)
                                  * @see eZExtension::activeExtensions()
@@ -170,7 +175,8 @@ class eZCache
                                        'expiry-key' => 'active-extensions-cache',
                                        'enabled' => true,
                                        'path' => false,
-                                       'function' => array( 'eZCache', 'clearActiveExtensions' ) ),
+                                       'function' => array( 'eZCache', 'clearActiveExtensions' ),
+                                       'purge-function' => array( 'eZCache', 'clearActiveExtensions' ) ),
 
                                 array( 'name' => ezpI18n::tr( 'kernel/cache', 'TS Translation cache' ),
                                        'id' => 'translation',

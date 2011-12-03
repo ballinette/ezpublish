@@ -267,14 +267,6 @@
 
             // eZ: Setup ctrl+s to execute a stroe draft action (the whole content object)
             ed.addShortcut('ctrl+s', ed.getLang('save.save_desc'), 'mceStoreDraft');
-
-            // eZ: the pasted text from Office with Firefox and Chrome on Windows may
-            // contain some line feeds that are badly interpreted
-            // see http://issues.ez.no/18239
-            // @todo Might not be needed anymore after TinyMCE 3.4 update
-            ed.onPostProcess.add(function(pl, o) {
-                o.content = o.content.replace(/(\n|\r)/g, "");
-            });
         },
 
                 _isHighContrast : function() {
@@ -1393,10 +1385,10 @@
                     if (v = DOM.getAttrib(n, 'id'))
                         ti += 'id: ' + v + ' ';
 
-                    // eZ: Support custom className var and remove internal ezoeItem prefix
+                    // eZ: Support custom className var and remove internal ezoeItem/ezoeAlign prefixes
                     if (v = className ?  className : n.className)
                     {
-                        v = v.replace(/\b\s*(webkit|mce|Apple-|ezoeItem)\w+\s*\b/g, '')
+                        v = jQuery.trim( v.replace(/\b\s*(webkit|mce|Apple-|ezoeItem|ezoeAlign)\w+\s*\b/g, '') );
 
                         if (v) {
                             ti = ti + 'class: ' + v + ' ';
@@ -1612,10 +1604,17 @@
 
             if ( p )
             {
+                // resetting CSS class for alignment before putting the new right value if needed
+                ed.dom.setAttrib( n, 'class', jQuery.trim( ed.dom.getAttrib( n, 'class' ).replace( /ezoeAlign\w+/, '' ) ) );
                 if ( n.align === c )
+                {
                     ed.dom.setAttrib( n, 'align', '' );
+                }
                 else
+                {
+                    ed.dom.addClass( n, 'ezoeAlign' + c );
                     ed.dom.setAttrib( n, 'align', c );
+                }
             }
             return false;
         },

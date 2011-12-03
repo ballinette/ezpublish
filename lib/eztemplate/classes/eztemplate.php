@@ -4,7 +4,7 @@
  *
  * @copyright Copyright (C) 1999-2011 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version  2011.9
+ * @version  2011.11
  * @package lib
  */
 
@@ -604,7 +604,7 @@ class eZTemplate
         {
             $variableData = $node[2];
             $variablePlacement = $node[3];
-            $rslt = $this->processVariable( $textElements, $variableData, $variablePlacement, $rootNamespace, $currentNamespace );
+            $this->processVariable( $textElements, $variableData, $variablePlacement, $rootNamespace, $currentNamespace );
             if ( !is_array( $textElements ) )
                 eZDebug::writeError( "Textelements is no longer array: '$textElements'", __METHOD__ . '::variable' );
         }
@@ -651,6 +651,7 @@ class eZTemplate
         else
         {
             $this->warning( "", "Function \"$functionName\" is not registered" );
+            return null;
         }
     }
 
@@ -1757,8 +1758,19 @@ class eZTemplate
         if ( eZTemplate::isXHTMLCodeIncluded() )
             $preText .= "<p class=\"small\">$path</p><br/>\n";
         $postText = "\n<!-- STOP: including template: $path ($uri) -->\n";
-        $root[1] = array_merge( array( eZTemplateNodeTool::createTextNode( $preText ) ), $root[1] );
-        $root[1][] = eZTemplateNodeTool::createTextNode( $postText );
+
+        $preNode = eZTemplateNodeTool::createTextNode( $preText );
+        $postNode = eZTemplateNodeTool::createTextNode( $postText );
+
+        if ( is_array( $root[1] ) )
+        {
+            $root[1] = array_merge( array( $preNode ), $root[1] );
+        }
+        else
+        {
+            $root[1] = array( $preNode );
+        }
+        $root[1][] = $postNode;
     }
 
     /*!

@@ -4,7 +4,7 @@
  *
  * @copyright Copyright (C) 1999-2011 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version  2011.9
+ * @version  2011.11
  * @package kernel
  */
 
@@ -274,7 +274,7 @@ class eZObjectForwarder
                 $spacing = $acquisitionSpacing;
                 if ( $attributeAccessCount > 1 )
                 {
-                    $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "else " . ( $resourceData['use-comments'] ? ( "/*OF:" . __LINE__ . "*/" ) : "" ) . " if ( !$resourceFound )\n{\n", array( 'spacing' => $acquisitionSpacing ) );
+                    $newNodes[] = eZTemplateNodeTool::createCodePieceNode( "else " . ( $resourceData['use-comments'] ? ( "/*OF:" . __LINE__ . "*/" ) : "" ) . " if ( !\$resourceFound )\n{\n", array( 'spacing' => $acquisitionSpacing ) );
                     $spacing += 4;
                 }
                 else if ( $attributeAccessCount > 0 )

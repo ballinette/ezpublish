@@ -4,7 +4,7 @@
  *
  * @copyright Copyright (C) 1999-2011 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version  2011.9
+ * @version  2011.11
  * @package kernel
  */
 
@@ -293,7 +293,7 @@ class eZStaticCache implements ezpStaticCache
                 {
                     if ( !$quiet and $cli and $parentURL['glob'] )
                         $cli->output( "wildcard cache: " . $parentURL['url'] . '/' . $parentURL['glob'] . "*" );
-                    $elements = eZURLAliasML::fetchByPath( $parentURL['url'], $parentURL['glob'], true, true );
+                    $elements = eZURLAliasML::fetchByPath( $parentURL['url'], $parentURL['glob'] );
                     foreach ( $elements as $element )
                     {
                         $path = '/' . $element->getPath();
@@ -538,7 +538,7 @@ class eZStaticCache implements ezpStaticCache
 
             fwrite( $fp, $content . $comment );
             fclose( $fp );
-            eZFile::rename( $tmpFileName, $file );
+            eZFile::rename( $tmpFileName, $file, false, eZFile::CLEAN_ON_FAILURE | eZFile::APPEND_DEBUG_ON_FAILURE );
 
             $perm = eZINI::instance()->variable( 'FileSettings', 'StorageFilePermissions' );
             chmod( $file, octdec( $perm ) );

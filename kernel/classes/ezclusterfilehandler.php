@@ -4,14 +4,14 @@
  *
  * @copyright Copyright (C) 1999-2011 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version  2011.9
+ * @version  2011.11
  * @package kernel
  */
 class eZClusterFileHandler
 {
     /**
      * Returns the configured instance of an eZClusterFileHandlerInterface
-     * See ClusteringSettings.FileHandler in php.ini
+     * See ClusteringSettings.FileHandler in file.ini
      *
      * @param string|bool $filename
      *        Optional filename the handler should be initialized with

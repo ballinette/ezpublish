@@ -4,7 +4,7 @@
  *
  * @copyright Copyright (C) 1999-2011 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version  2011.9
+ * @version  2011.11
  * @package kernel
  */
 
@@ -529,7 +529,7 @@ class eZFilePackageHandler extends eZPackageHandler
         return false;
     }
 
-    function iniMatch( $filePath, &$role, &$roleValue, &$file )
+    function iniMatch( $filePath, &$role, &$roleValue, &$file, &$triedFiles )
     {
         if ( preg_match( "#^settings/siteaccess/([^/]+)/([^/]+)$#", $filePath, $matches ) )
         {

@@ -4,7 +4,7 @@
  *
  * @copyright Copyright (C) 1999-2011 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version  2011.9
+ * @version  2011.11
  * @package kernel
  */
 
@@ -30,10 +30,10 @@ class eZFinishUserRegisterType extends eZWorkflowEventType {
         $objectID = $parameterList['object_id'];
         $object = eZContentObject::fetch( $objectID );
         // @todo: improve the possible performance.
-        if( $object->attribute( 'class_name' ) == 'user' )
+        if( $object->attribute( 'class_identifier' ) == 'user' )
         {
             $result = eZOperationHandler::execute( 'user', 'register', array( 'user_id' => $objectID ) );
-            return $result;
+            return $result['status'];
         }
     }
 

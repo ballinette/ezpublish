@@ -6,7 +6,7 @@
 //
 // ## BEGIN COPYRIGHT, LICENSE AND WARRANTY NOTICE ##
 // SOFTWARE NAME: eZ Publish Community Project
-// SOFTWARE RELEASE:  2011.9
+// SOFTWARE RELEASE:  2011.11
 // COPYRIGHT NOTICE: Copyright (C) 1999-2011 eZ Systems AS
 // SOFTWARE LICENSE: GNU General Public License v2
 // NOTICE: >
@@ -1596,12 +1596,13 @@ class eZOOImport
                                     //echo "Initializing Image from $href<br />";
                                     $imageContent->initializeFromFile( $href, false, basename( $href ) );
                                     $dataMap['image']->store();
-                                    $this->RelatedImageArray[] = array( "ID" => $contentObjectID,
-                                                                        "ContentObject" => $contentObject );
+
                                 }
                                 else
                                     $contentObjectID = $contentObject->attribute( 'id' );
 
+                                $this->RelatedImageArray[] = array( "ID" => $contentObjectID,
+                                                                    "ContentObject" => $contentObject );
 
                                 $frameContent .= "<embed object_id='$contentObjectID' align='$imageAlignment' size='$imageSize' />";
 

@@ -6,7 +6,7 @@
 //
 // ## BEGIN COPYRIGHT, LICENSE AND WARRANTY NOTICE ##
 // SOFTWARE NAME: eZ Publish Community Project
-// SOFTWARE RELEASE:  2011.9
+// SOFTWARE RELEASE:  2011.11
 // COPYRIGHT NOTICE: Copyright (C) 1999-2011 eZ Systems AS
 // SOFTWARE LICENSE: GNU General Public License v2
 // NOTICE: >
@@ -143,7 +143,8 @@ class ezjscServerFunctionsJs extends ezjscServerFunctions
         return "
 YUI( YUI3_config ).add('io-ez', function( Y )
 {
-    var _rootUrl = '$rootUrl', _serverUrl = _rootUrl + 'ezjscore/', _seperator = '@SEPERATOR$', _configBak;
+    var _rootUrl = '$rootUrl', _serverUrl = _rootUrl + 'ezjscore/', _seperator = '@SEPERATOR$', _configBak,
+        _prefUrl = _rootUrl + 'user/preferences';
 
     // (static) Y.io.ez() uses Y.io()
     //
@@ -223,6 +224,16 @@ YUI( YUI3_config ).add('io-ez', function( Y )
     _ez.root_url = _rootUrl;
     _ez.seperator = _seperator;
     Y.io.ez = _ez;
+    Y.io.ez.setPreference = function( name, value )
+    {
+        var c = {on:{}, data:'', headers: {}, method: 'POST'},
+            _tokenNode = document.getElementById( 'ezxform_token_js' );
+
+        c.data = 'Function=set_and_exit&Key=' + encodeURIComponent( name ) + '&Value=' + encodeURIComponent( value );
+        if ( _tokenNode )
+            c.data += '&ezxform_token=' + _tokenNode.getAttribute( 'title' );
+        return Y.io( _prefUrl, c );
+    }
 }, '3.0.0' ,{requires:['io-base', 'json-parse']});
         ";
     }
@@ -284,7 +295,8 @@ YUI( YUI3_config ).add('io-ez', function( Y )
         $rootUrl = self::getIndexDir();
         return "
 (function($) {
-    var _rootUrl = '$rootUrl', _serverUrl = _rootUrl + 'ezjscore/', _seperator = '@SEPERATOR$';
+    var _rootUrl = '$rootUrl', _serverUrl = _rootUrl + 'ezjscore/', _seperator = '@SEPERATOR$',
+        _prefUrl = _rootUrl + 'user/preferences';
 
 // FIX: Ajax is broken on IE8 / IE7 on jQuery 1.4.x as it's trying to use the broken window.XMLHttpRequest object
 if ( window.XMLHttpRequest && window.ActiveXObject )
@@ -325,6 +337,16 @@ if ( window.XMLHttpRequest && window.ActiveXObject )
     _ez.root_url = _rootUrl;
     _ez.seperator = _seperator;
     $.ez = _ez;
+
+    $.ez.setPreference = function( name, value )
+    {
+        var param = {'Function': 'set_and_exit', 'Key': name, 'Value': value};
+            _tokenNode = document.getElementById( 'ezxform_token_js' );
+        if ( _tokenNode )
+            param.ezxform_token = _tokenNode.getAttribute( 'title' );
+
+        return $.post( _prefUrl, param );
+    };
 
     // Method version, for loading response into elements
     // NB: Does not use json (not possible with .load), so ezjscore/call will return string
@@ -402,7 +424,8 @@ if ( window.XMLHttpRequest && window.ActiveXObject )
         // Prepare search parameters
         $params = array( 'SearchOffset' => $searchOffset,
                          'SearchLimit' => $searchLimit,
-                         'SortArray' => array( 'published', 0 )
+                         'SortArray' => array( 'published', 0 ), // Legacy search engine uses SortArray
+                         'SortBy' => array( 'published', 0 ) // eZ Find search method implementation uses SortBy
         );
 
         if ( self::hasPostValue( $http, 'SearchContentClassAttributeID' ) )

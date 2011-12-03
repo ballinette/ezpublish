@@ -124,7 +124,7 @@ static void recursiveFileInfoList(const QDir &dir,
     }
 }
 
-static QString version = "2011.9"; // eZ Publish version plus local version
+static QString version = "2011.11"; // eZ Publish version plus local version
 static QStringList dirs;          // Additional scan directories
 static QDir extension_dir;        // Extension directory
 static QRegExp localeRE( "^[a-z]{3}-[A-Z]{2}(@.*)?$" );

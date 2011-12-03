@@ -4,7 +4,7 @@
  *
  * @copyright Copyright (C) 1999-2011 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version  2011.9
+ * @version  2011.11
  * @package kernel
  */
 
@@ -105,6 +105,8 @@ class eZImageFile extends eZPersistentObject
         $contentObjectID = (int)( $rows[0]['contentobject_id'] );
         $contentClassAttributeID = (int)( $rows[0]['contentclassattribute_id'] );
         $filepath = $db->escapeString( $filepath );
+        // Escape _ in like to avoid it to act as a wildcard !
+        $filepath = addcslashes( $filepath, "_" );
         $query = "SELECT id, version
                   FROM   ezcontentobject_attribute
                   WHERE  contentobject_id = $contentObjectID and

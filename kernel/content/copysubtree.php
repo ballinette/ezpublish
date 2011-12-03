@@ -2,7 +2,7 @@
 /**
  * @copyright Copyright (C) 1999-2011 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version  2011.9
+ * @version  2011.11
  * @package kernel
  */
 
@@ -776,7 +776,7 @@ function browse( $Module, $srcNode )
 
     $viewMode = 'full';
     if ( $Module->hasActionParameter( 'ViewMode' ) )
-        $viewMode = $module->actionParameter( 'ViewMode' );
+        $viewMode = $Module->actionParameter( 'ViewMode' );
 
     eZContentBrowse::browse(
          array( 'action_name'          => 'CopySubtree',
@@ -840,7 +840,7 @@ function showNotificationAfterCopying( $http, $Module, &$Result, &$Notifications
         }
 
         if ( $Module->hasActionParameter( 'ViewMode' ) )
-            $viewMode = $module->actionParameter( 'ViewMode' );
+            $viewMode = $Module->actionParameter( 'ViewMode' );
         else
             $viewMode = 'full';
 

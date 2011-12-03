@@ -5,7 +5,7 @@
  *
  * @copyright Copyright (C) 1999-2011 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version  2011.9
+ * @version  2011.11
  * @package
  */
 
@@ -45,7 +45,7 @@ if ( !$fileHandler instanceof eZDFSFileHandler )
 $delete = isset( $options['D'] );
 $checkBase = isset( $options['S'] );
 $checkDFS = isset( $options['B'] );
-$pause = 10000; // microseconds, time to wait between heavy operations
+$pause = 1000; // microseconds, time to wait between heavy operations
 
 if ( !$checkBase && !$checkDFS )
 {
@@ -82,7 +82,9 @@ if ( $checkBase )
         {
             $cli->output( '  - ' . $fh->name() );
             if ( $delete );
+            // expire the file, and purge it
             {
+                $fh->delete();
                 $fh->purge();
             }
         }

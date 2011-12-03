@@ -6,7 +6,7 @@
 //
 // ## BEGIN COPYRIGHT, LICENSE AND WARRANTY NOTICE ##
 // SOFTWARE NAME: eZ Publish Community Project
-// SOFTWARE RELEASE:  2011.9
+// SOFTWARE RELEASE:  2011.11
 // COPYRIGHT NOTICE: Copyright (C) 1999-2011 eZ Systems AS
 // SOFTWARE LICENSE: GNU General Public License v2
 // NOTICE: >
@@ -64,6 +64,8 @@ class ezjscAjaxContent
                                                                                   'xml' => 'xml',
                                                                                   'text' => 'text' ) )
     {
+        $acceptList = array();
+
         if ( isset($_POST['http_accept']) )
             $acceptList = explode( ',', $_POST['http_accept'] );
         else if ( isset($_POST['HTTP_ACCEPT']) )
@@ -72,7 +74,7 @@ class ezjscAjaxContent
             $acceptList = explode( ',', $_GET['http_accept'] );
         else if ( isset($_GET['HTTP_ACCEPT']) )
             $acceptList = explode( ',', $_GET['HTTP_ACCEPT'] );
-        else
+        else if ( isset($_SERVER['HTTP_ACCEPT']) )
             $acceptList = explode( ',', $_SERVER['HTTP_ACCEPT'] );
 
         foreach( $acceptList as $accept )

@@ -5,7 +5,7 @@
 //
 // ## BEGIN COPYRIGHT, LICENSE AND WARRANTY NOTICE ##
 // SOFTWARE NAME: eZ Publish Community Project
-// SOFTWARE RELEASE:  2011.9
+// SOFTWARE RELEASE:  2011.11
 // COPYRIGHT NOTICE: Copyright (C) 1999-2011 eZ Systems AS
 // SOFTWARE LICENSE: GNU General Public License v2
 // NOTICE: >
@@ -40,7 +40,7 @@ class eZOEInputParser extends eZXMLInputParser
     /**
      * Used to strip out ezoe, tinymce & browser specific classes
      */
-     const HTML_CLASS_REGEX = "/(webkit-[\w\-]+|Apple-[\w\-]+|mceItem\w+|ezoeItem\w+|mceVisualAid)/i";
+     const HTML_CLASS_REGEX = "/(webkit-[\w\-]+|Apple-[\w\-]+|mceItem\w+|ezoeItem\w+|ezoeAlign\w+|mceVisualAid)/i";
 
     /**
      * Maps input tags (html) to a output tag or a hander to

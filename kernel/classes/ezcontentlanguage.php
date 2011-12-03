@@ -4,7 +4,7 @@
  *
  * @copyright Copyright (C) 1999-2011 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version  2011.9
+ * @version  2011.11
  * @package kernel
  */
 
@@ -186,7 +186,19 @@ class eZContentLanguage extends eZPersistentObject
             $clusterFileHandler->fileStoreContents( $cachePath, serialize( $languages ), 'content', 'php' );
         }
         else
+        {
             $languages = unserialize( $clusterFileHandler->fetchContents() );
+            // If for some reason unserialize operation fails, we force the cache file to regenerate
+            // See http://issues.ez.no/18613
+            if ( $languages === false )
+            {
+                eZDebug::writeError(
+                    "An error occurred while reading content language cache file $cachePath. File is being re-generated",
+                    __METHOD__
+                );
+                return self::fetchList( true );
+            }
+        }
 
         unset( $GLOBALS['eZContentLanguageList'] );
         unset( $GLOBALS['eZContentLanguageMask'] );

@@ -13,7 +13,7 @@ class ezmultiuploadInfo
     static function info()
     {
         return array( 'Name' => 'eZ Multiupload',
-                      'Version' => '1.5.0-dev',
+                      'Version' => '1.6.0-dev',
                       'Copyright' => 'Copyright (C) 1999-2011 eZ Systems AS',
                       'License' => 'GNU General Public License v2',
                     );

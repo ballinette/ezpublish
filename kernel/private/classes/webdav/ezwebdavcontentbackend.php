@@ -4,7 +4,7 @@
  *
  * @copyright Copyright (C) 1999-2011 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version  2011.9
+ * @version  2011.11
  * @package kernel
  */
 
@@ -886,7 +886,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
             return false; // @as self::FAILED_FORBIDDEN;
         }
 
-        $result = $this->putVirtualFolderData( $currentSite, $target, $tempFile, $fullPath );
+        $result = $this->putVirtualFolderData( $currentSite, $target, $tempFile );
 
         unlink( $tempFile );
         eZDir::cleanupEmptyDirectories( dirname( $tempFile ) );
@@ -1004,7 +1004,7 @@ class eZWebDAVContentBackend extends ezcWebdavSimpleBackend implements ezcWebdav
         $fullPath = $target;
         $target = $this->splitFirstPathElement( $target, $currentSite );
 
-        $status = $this->deleteVirtualFolder( $currentSite, $target, $fullPath );
+        $status = $this->deleteVirtualFolder( $currentSite, $target );
         // @as @todo return based on $status
 
         // Return success

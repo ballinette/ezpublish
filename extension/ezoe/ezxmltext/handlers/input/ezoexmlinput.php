@@ -5,7 +5,7 @@
 //
 // ## BEGIN COPYRIGHT, LICENSE AND WARRANTY NOTICE ##
 // SOFTWARE NAME: eZ Publish Community Project
-// SOFTWARE RELEASE:  2011.9
+// SOFTWARE RELEASE:  2011.11
 // COPYRIGHT NOTICE: Copyright (C) 1999-2011 eZ Systems AS
 // SOFTWARE LICENSE: GNU General Public License v2
 // NOTICE: >
@@ -1225,7 +1225,10 @@ class eZOEXMLInput extends eZXMLInputHandler
                     }
 
                     if ( $alignment === 'center' )
+                    {
                         $objectAttr .= ' align="middle"';
+                        $className .= ' ezoeAlignmiddle'; // align="middle" is not taken into account by browsers on img
+                    }
                     else if ( $alignment )
                         $objectAttr .= ' align="' . $alignment . '"';
 
@@ -1532,8 +1535,11 @@ class eZOEXMLInput extends eZXMLInputHandler
                     $customAttributePart .= ' style="width:' . $width . ';"';
                 }*/
 
-                if ( is_string( $border ) )
+                if ( $border !== '' && is_string( $border ) )
                 {
+                    if ( $border === '0%' )
+                        $border = '0';// Strip % if 0 to make sure TinyMCE shows a dotted border
+
                     $customAttributePart .= ' border="' . $border . '"';
                 }
 

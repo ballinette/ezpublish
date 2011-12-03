@@ -4,7 +4,7 @@
  *
  * @copyright Copyright (C) 1999-2011 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version  2011.9
+ * @version  2011.11
  * @package lib
  */
 
@@ -615,8 +615,11 @@ class eZINI
         fclose( $fp );
 
         // Rename cache temp file to final desitination and set permissions
-        eZFile::rename( $tmpCacheFile, $cachedFile );
-        chmod( $cachedFile, self::$filePermission );
+        if( eZFile::rename( $tmpCacheFile, $cachedFile ) )
+        {
+            chmod( $cachedFile, self::$filePermission );
+        }
+
 
         if ( self::isDebugEnabled() )
             eZDebug::writeNotice( "Wrote cache file '$cachedFile'", __METHOD__ );
@@ -703,7 +706,7 @@ class eZINI
             {
                 eZDebug::accumulatorStart( 'ini_conversion', false, 'INI string conversion' );
                 $contents = $this->Codec->convertString( $contents );
-                eZDebug::accumulatorStop( 'ini_conversion', false, 'INI string conversion' );
+                eZDebug::accumulatorStop( 'ini_conversion' );
             }
         }
         else

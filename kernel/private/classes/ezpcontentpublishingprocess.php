@@ -4,7 +4,7 @@
  *
  * @copyright Copyright (C) 1999-2011 eZ Systems AS. All rights reserved.
  * @license http://www.gnu.org/licenses/gpl-2.0.txt GNU General Public License v2
- * @version  2011.9
+ * @version  2011.11
  * @package kernel
  * @subpackage content
  */
@@ -158,6 +158,9 @@ class ezpContentPublishingProcess extends eZPersistentObject
         $this->setAttribute( 'status', self::STATUS_WORKING );
         $this->store( array( 'status' ) );
 
+        // prepare the cluster file handler for the fork
+        eZClusterFileHandler::preFork();
+
         $pid = pcntl_fork();
 
         // force the DB connection closed
@@ -168,9 +171,6 @@ class ezpContentPublishingProcess extends eZPersistentObject
 
         // Force the cluster DB connection closed if the cluster handler is DB based
         $cluster = eZClusterFileHandler::instance();
-
-        // prepare the cluster file handler for the fork
-        eZClusterFileHandler::preFork();
 
         // error, cancel
         if ( $pid == -1 )
