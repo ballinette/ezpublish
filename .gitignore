@@ -12,6 +12,7 @@ var/somesubfolder/
 *.DS_Store
 .project
 .idea/
+.htaccess
 nbproject/
 bin/linux/ezlupdate
 bin/win32
