@@ -1,14 +1,9 @@
 extension/
 settings/override/
+settings/siteaccess/site_admin/
+settings/siteaccess/www/
 lib/ezc/
-var/autoload/
-var/cache/
-var/*_site/
-var/log/
-var/storage/
-var/dfsmount/
-var/test*
-var/somesubfolder/
+var/
 *.DS_Store
 .project
 .idea/
@@ -19,3 +14,4 @@ bin/win32
 support/ezlupdate-qt4.5/ezlupdate/Makefile
 support/ezlupdate-qt4.5/ezlupdate/moc
 support/ezlupdate-qt4.5/ezlupdate/obj
+
