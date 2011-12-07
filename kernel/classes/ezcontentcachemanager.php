@@ -153,6 +153,31 @@ class eZContentCacheManager
                 }
                 $relatedObjects = array_merge( $relatedObjects, $objects, $previousVersionObjects );
             }
+
+            /* Author : Abdelkader RHOUATI (abdelkader.rhouati@gmail.com / www.arhouati.com)
+            * unofficiel patch
+            * Description :add all node_id of nodes that have a relation with the current objet, using ezflow'block
+            * */
+            if ( in_array( 'reverse_ezflow', $relTypes ) )
+            {
+                $objectID = $object->attribute('id');
+                if ( ! empty( $objectID ) )
+                {
+                $db = eZDB::instance();
+                $query = "SELECT block.node_id
+                FROM ezm_pool AS pool, ezm_block AS block
+                WHERE pool.object_id = $objectID
+                AND pool.block_id = block.id";
+                $row = $db->arrayQuery( $query );
+                
+                foreach($row as $item)
+                {
+                    $nodeIDList[] = $item["node_id"];
+                }
+                }
+            }
+            /* End Patch*/
+    
         }
         else
         {
