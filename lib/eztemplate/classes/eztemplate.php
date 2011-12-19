@@ -522,6 +522,8 @@ class eZTemplate
                 eZDebug::addTimingPoint( "Process" );
             eZDebug::accumulatorStart( 'template_processing', 'template_total', 'Template processing' );
 
+            $this->runPrefetchHooks( $resourceData );
+
             $templateCompilationUsed = false;
             if ( $resourceData['compiled-template'] )
             {
@@ -544,6 +546,8 @@ class eZTemplate
                     eZDebug::writeDebug( "FETCH END URI: $template, $fname" );
             }
 
+            $this->runPostfetchchHooks( $resourceData );
+
             eZDebug::accumulatorStop( 'template_processing' );
             if ( $this->ShowDetails )
                 eZDebug::addTimingPoint( "Process done" );
@@ -564,6 +568,46 @@ class eZTemplate
         return $text;
     }
 
+    /*
+    TEST : INSERTION HOOK PRÉ TRAITEMENT
+    */
+    private function runPrefetchHooks( $resourceData )
+    {
+        if ( !empty( $resourceData['prefetch_hook'] ) )
+        {
+            $hookClassList = is_array( $resourceData['prefetch_hook'] )?$resourceData['prefetch_hook']:array( $resourceData['prefetch_hook'] ); 
+            foreach( $hookClassList as $hookClassInfo )
+            {
+                $hookParams = explode( '|', $hookClassInfo );
+                $hookClass = array_shift( $hookParams );
+                if ( is_callable( array( $hookClass, 'runHook' ) ) )
+                {
+                    call_user_func_array( array( $hookClass, 'runHook' ), array( &$this, $hookParams ) );
+                }
+            }
+        }
+    }
+
+    /*
+    TEST : INSERTION HOOK POST TRAITEMENT
+    */
+    private function runPostfetchchHooks( $resourceData )
+    {
+        if ( !empty( $resourceData['postfetch_hook'] ) )
+        {
+            $hookClassList = is_array( $resourceData['postfetch_hook'] )?$resourceData['postfetch_hook']:array( $resourceData['postfetch_hook'] ); 
+            foreach( $hookClassList as $hookClassInfo )
+            {
+                $hookParams = explode( '|', $hookClassInfo );
+                $hookClass = array_shift( $hookParams );
+                if ( is_callable( array( $hookClass, 'runHook' ) ) )
+                {
+                    call_user_func_array( array( $hookClass, 'runHook' ), array( &$this, $hookParams ) );
+                }
+            }
+        }
+    }
+    
     function process( $root, &$text, $rootNamespace, $currentNamespace )
     {
         $this->createLocalVariablesList();

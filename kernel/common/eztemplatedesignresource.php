@@ -287,6 +287,16 @@ class eZTemplateDesignResource extends eZTemplateFileResource
                 if ( !is_string( $cacheMap ) and trim( $cacheMap['code'] ) )
                 {
                     eval( "\$matchFile = " . $cacheMap['code'] . ";" );
+                    if ( ! empty ( $cacheMap['prefetch_hook'] ) )
+                    {
+                        eval( "\$matchPrefetchHook = " . $cacheMap['prefetch_hook'] . ";" );
+                        $match['prefetch_hook'] = $matchPrefetchHook;
+                    }
+                    if ( ! empty( $cacheMap['postfetch_hook'] ) )
+                    {
+                        eval( "\$matchPostfetchHook = " . $cacheMap['postfetch_hook'] . ";" );
+                        $match['postfetch_hook'] = $matchPostfetchHook;
+                    }
                 }
                 else
                 {
@@ -346,6 +356,8 @@ class eZTemplateDesignResource extends eZTemplateFileResource
                         if ( $matchOverride == true )
                         {
                             $match['file'] = $customMatch['match_file'];
+                            $match['prefetch_hook'] = $customMatch['prefetch_hook'];
+                            $match['postfetch_hook'] = $customMatch['postfetch_hook'];
                             $matchFound = true;
                             break;
                         }
@@ -357,6 +369,8 @@ class eZTemplateDesignResource extends eZTemplateFileResource
                     {
                         // Default match without conditions
                         $match['file'] = $customMatch['match_file'];
+                        $match['prefetch_hook'] = $customMatch['prefetch_hook'];
+                        $match['postfetch_hook'] = $customMatch['postfetch_hook'];
                         $matchFound = true;
                     }
                 }
@@ -384,6 +398,8 @@ class eZTemplateDesignResource extends eZTemplateFileResource
             $tpl->setVariable( 'used', $usedKeys, 'DesignKeys' );
             $tpl->setVariable( 'matched', $matchedKeys, 'DesignKeys' );
             $resourceData['template-filename'] = $file;
+            $resourceData['prefetch_hook'] = array_key_exists( 'prefetch_hook', $match )?$match['prefetch_hook']:'';
+            $resourceData['postfetch_hook'] = array_key_exists( 'postfetch_hook', $match )?$match['postfetch_hook']:'';
             $result = eZTemplateFileResource::handleResourceData( $tpl, $this, $resourceData, $method, $extraParameters );
         }
         else
@@ -448,6 +464,8 @@ class eZTemplateDesignResource extends eZTemplateFileResource
                 {
                     $baseDir = isset( $matchFileArray[$matchKey]['base_dir'] ) ? $matchFileArray[$matchKey]['base_dir'] : '';
                     $defaultMatchFile = $baseDir . $matchKey;
+                    $defaultPrefetchHook = '';
+                    $defaultPostfetchHook = '';
                     // Custom override matching
 //                    $phpCode .= "    case  \"$matchKey\":\n    {\n";
 
@@ -490,15 +508,21 @@ class eZTemplateDesignResource extends eZTemplateFileResource
 //                            $phpCode .= "            return '" . $customMatch['match_file'] . "';\n        }\n";
                             if ( $condCount > 1 )
                                 $matchConditionArray[] = array( 'condition' => '(' . $matchCondition . ')',
-                                                                'matchFile' => $customMatch['match_file'] );
+                                                                'matchFile' => $customMatch['match_file'],
+                                                                'prefetchHook' => $customMatch['prefetch_hook'],
+                                                                'postfetchHook' => $customMatch['postfetch_hook'] );
                             else
                                 $matchConditionArray[] = array( 'condition' => $matchCondition,
-                                                                'matchFile' => $customMatch['match_file'] );
+                                                                'matchFile' => $customMatch['match_file'],
+                                                                'prefetchHook' => $customMatch['prefetch_hook'],
+                                                                'postfetchHook' => $customMatch['postfetch_hook'] );
                         }
                         else
                         {
                             // No override conditions defined. Override default match file
                             $defaultMatchFile = $customMatch['match_file'];
+                            $defaultPrefetchHook = $customMatch['prefetch_hook'];
+                            $defaultPostfetchHook = $customMatch['postfetch_hook'];
                         }
                     }
 
@@ -514,6 +538,56 @@ class eZTemplateDesignResource extends eZTemplateFileResource
                     $phpCode .= "\\'" . $defaultMatchFile . "\\'";
 
                     for ( $condCount = 0; $condCount < count( $matchConditionArray ); $condCount++)
+                    {
+                        $phpCode .= ')';
+                    }
+
+                    $phpCode .= "', 'prefetch_hook' => '";
+                    $totalPrefetch = 0;
+                    foreach ( array_keys( $matchConditionArray ) as $key )
+                    {
+                        if ( ! empty( $matchConditionArray[$key]['prefetchHook'] ) )
+                        {
+                            $totalPrefetch++;
+                            $matchPrefetchHook = '';
+                            if ( is_array( $matchConditionArray[$key]['prefetchHook'] ) )
+                            {
+                                $matchPrefetchHook = "Array(\\'" . implode( "\\',\\'",$matchConditionArray[$key]['prefetchHook']) . "\\')";
+                            }
+                            else
+                            {
+                                $matchPrefetchHook = "\\'" .  $matchConditionArray[$key]['prefetchHook'] . "\\'";
+                            }
+                            $phpCode .= '(' . $matchConditionArray[$key]['condition'] . ' ? ' . $matchPrefetchHook . ' : ';
+                        }
+                    }
+                    $phpCode .= "\\'" . $defaultPrefetchHook . "\\'";
+                    for ( $condCount = 0; $condCount < $totalPrefetch; $condCount++)
+                    {
+                        $phpCode .= ')';
+                    }
+
+                    $phpCode .= "', 'postfetch_hook' => '";
+                    $totalPostfetch = 0;
+                    foreach ( array_keys( $matchConditionArray ) as $key )
+                    {
+                        if ( ! empty( $matchConditionArray[$key]['postfetchHook'] ) )
+                        {
+                            $totalPostfetch++;
+                            $matchPostfetchHook = '';
+                            if ( is_array( $matchConditionArray[$key]['postfetchHook'] ) )
+                            {
+                                $matchPostfetchHook = "Array(\\'" . implode( "\\',\\'",$matchConditionArray[$key]['postfetchHook']) . "\\')";
+                            }
+                            else
+                            {
+                                $matchPostfetchHook = "\\'" .  $matchConditionArray[$key]['postfetchHook'] . "\\'";
+                            }
+                            $phpCode .= '(' . $matchConditionArray[$key]['condition'] . ' ? ' . $matchPostfetchHook . ' : ';
+                        }
+                    }
+                    $phpCode .= "\\'" . $defaultPostfetchHook . "\\'";
+                    for ( $condCount = 0; $condCount < $totalPostfetch; $condCount++)
                     {
                         $phpCode .= ')';
                     }
@@ -898,6 +972,8 @@ class eZTemplateDesignResource extends eZTemplateFileResource
             $customMatchArray['conditions'] = isset( $overrideSetting['Match'] ) ? $overrideSetting['Match'] : null;
             $customMatchArray['match_file'] = $overrideMatchFilePath;
             $customMatchArray['override_name'] = $overrideName;
+            $customMatchArray['prefetch_hook'] = array_key_exists( 'PrefetchHook', $overrideSetting )?$overrideSetting['PrefetchHook']:'';
+            $customMatchArray['postfetch_hook'] = array_key_exists( 'PostfetchHook', $overrideSetting )?$overrideSetting['PostfetchHook']:'';
 
             $matchFileArray[$overrideSource]['custom_match'][] = $customMatchArray;
             // }
