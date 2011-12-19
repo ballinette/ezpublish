@@ -333,6 +333,16 @@ eZExtension::activateExtensions( 'access' );
 // all eZINI instances as they may not take into account siteaccess specific settings.
 eZINI::resetAllInstances( false );
 
+// Reload Extenion ordering to reorder eZINI Global Override Dirs.
+// @TODO : Améliorer la gestion globale (éviter des appels multiples !!!)
+$siteINI = ezINI::instance();
+if ( $siteINI->variable( 'ExtensionSettings', 'ExtensionOrdering' ) === 'enabled' )
+{
+    eZINI::removeGlobalOverrideDirsByScope( 'sa-extension' );
+    eZINI::removeGlobalOverrideDirsByScope( 'extension' );
+    eZExtension::activateExtensions( false );
+}
+
 // Initialize module loading
 $moduleRepositories = eZModule::activeModuleRepositories();
 eZModule::setGlobalPathList( $moduleRepositories );

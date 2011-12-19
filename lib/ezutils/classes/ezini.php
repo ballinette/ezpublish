@@ -1159,6 +1159,30 @@ class eZINI
      * Removes an override dir by identifier
      * See {@link eZINI::defaultOverrideDirs()} for how these parameters are used.
      *
+     * @param string $scope 
+     * @return bool True if new dir was appended, false if there was a $identifier match and a overwrite
+     */
+    static function removeGlobalOverrideDirsByScope( $scope )
+    {
+
+        $dirs =& self::$GlobalOverrideDirArray;
+
+
+        if ( !isset( $dirs[$scope] ) )
+        {
+            eZDebug::writeWarning( "Undefined override dir scope: '$scope'", __METHOD__ );
+            $scope = 'extension';
+        }
+
+        $dirs[$scope] = array();
+
+        return true;
+    }
+
+    /**
+     * Removes an override dir by identifier
+     * See {@link eZINI::defaultOverrideDirs()} for how these parameters are used.
+     *
      * @param string $identifier Will remove existing directory with identifier it it exists
      * @param string $scope By default 'extension'
      * @return bool True if new dir was appended, false if there was a $identifier match and a overwrite

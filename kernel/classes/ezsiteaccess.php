@@ -570,6 +570,15 @@ class eZSiteAccess
         $access = self::change( $access, $siteINI );
         eZExtension::activateExtensions( 'access', $siteINI );
 
+		// Reload Extenion ordering to reorder eZINI Global Override Dirs.
+		// @TODO : Améliorer la gestion globale (éviter des appels multiples !!!)
+		if ( $siteINI->variable( 'ExtensionSettings', 'ExtensionOrdering' ) === 'enabled' )
+		{
+			eZINI::removeGlobalOverrideDirsByScope( 'sa-extension' );
+			eZINI::removeGlobalOverrideDirsByScope( 'extension' );
+			eZExtension::activateExtensions( false );
+		}
+
         // Restore current (old) siteacces if changes where only to be applied to locale instance of site.ini
         if ( $siteINI instanceof eZINI )
         {
