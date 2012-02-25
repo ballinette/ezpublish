@@ -287,12 +287,15 @@ class eZTemplateDesignResource extends eZTemplateFileResource
                 if ( !is_string( $cacheMap ) and trim( $cacheMap['code'] ) )
                 {
                     eval( "\$matchFile = " . $cacheMap['code'] . ";" );
+                    eval( "\$overrideName = " . $cacheMap['override_name'] . ";" );
                 }
                 else
                 {
                     $matchFile = $cacheMap;
+                    $overrideName = '';
                 }
                 $match['file'] = $matchFile;
+                $match['override_name'] = $overrideName;
             }
         }
         else
@@ -346,6 +349,7 @@ class eZTemplateDesignResource extends eZTemplateFileResource
                         if ( $matchOverride == true )
                         {
                             $match['file'] = $customMatch['match_file'];
+                            $match['override_name'] = $customMatch['override_name'];
                             $matchFound = true;
                             break;
                         }
@@ -357,6 +361,7 @@ class eZTemplateDesignResource extends eZTemplateFileResource
                     {
                         // Default match without conditions
                         $match['file'] = $customMatch['match_file'];
+                        $match['override_name'] = $customMatch['override_name'];
                         $matchFound = true;
                     }
                 }
@@ -384,6 +389,7 @@ class eZTemplateDesignResource extends eZTemplateFileResource
             $tpl->setVariable( 'used', $usedKeys, 'DesignKeys' );
             $tpl->setVariable( 'matched', $matchedKeys, 'DesignKeys' );
             $resourceData['template-filename'] = $file;
+            $resourceData['override_name'] = array_key_exists( 'override_name', $match )?$match['override_name']:'';
             $result = eZTemplateFileResource::handleResourceData( $tpl, $this, $resourceData, $method, $extraParameters );
         }
         else
@@ -448,6 +454,7 @@ class eZTemplateDesignResource extends eZTemplateFileResource
                 {
                     $baseDir = isset( $matchFileArray[$matchKey]['base_dir'] ) ? $matchFileArray[$matchKey]['base_dir'] : '';
                     $defaultMatchFile = $baseDir . $matchKey;
+                    $defaultOverrideName = '';
                     // Custom override matching
 //                    $phpCode .= "    case  \"$matchKey\":\n    {\n";
 
@@ -490,15 +497,18 @@ class eZTemplateDesignResource extends eZTemplateFileResource
 //                            $phpCode .= "            return '" . $customMatch['match_file'] . "';\n        }\n";
                             if ( $condCount > 1 )
                                 $matchConditionArray[] = array( 'condition' => '(' . $matchCondition . ')',
-                                                                'matchFile' => $customMatch['match_file'] );
+                                                                'matchFile' => $customMatch['match_file'],
+                                                                'overrideName' => $customMatch['override_name'] );
                             else
                                 $matchConditionArray[] = array( 'condition' => $matchCondition,
-                                                                'matchFile' => $customMatch['match_file'] );
+                                                                'matchFile' => $customMatch['match_file'],
+                                                                'overrideName' => $customMatch['override_name'] );
                         }
                         else
                         {
                             // No override conditions defined. Override default match file
                             $defaultMatchFile = $customMatch['match_file'];
+                            $defaultOverrideName = $customMatch['override_name'];
                         }
                     }
 
@@ -512,6 +522,19 @@ class eZTemplateDesignResource extends eZTemplateFileResource
                     }
 
                     $phpCode .= "\\'" . $defaultMatchFile . "\\'";
+
+                    for ( $condCount = 0; $condCount < count( $matchConditionArray ); $condCount++)
+                    {
+                        $phpCode .= ')';
+                    }
+
+                    $phpCode .= "', 'override_name' => '";
+                    foreach ( array_keys( $matchConditionArray ) as $key )
+                    {
+                        $phpCode .= '(' . $matchConditionArray[$key]['condition'] . ' ? ' . "\\'" . $matchConditionArray[$key]['overrideName'] . "\\'" . ' : ';
+                    }
+
+                    $phpCode .= "\\'" . $defaultOverrideName . "\\'";
 
                     for ( $condCount = 0; $condCount < count( $matchConditionArray ); $condCount++)
                     {
